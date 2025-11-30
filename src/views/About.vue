@@ -8,55 +8,43 @@
 
     <section class="about-content">
       <div class="container">
-        <h2>社团背景</h2>
-        <p>零壹网络安全社团成立于2023年，由一群热爱网络安全的学生发起成立。随着网络技术的飞速发展，网络安全问题日益突出，我们意识到培养网络安全人才的重要性，因此创建了这个社团。</p>
-
-        <h2>社团宗旨</h2>
-        <p>我们的宗旨是：</p>
-        <ul>
-          <li>提高学生的网络安全意识</li>
-          <li>培养学生的网络安全技术能力</li>
-          <li>促进网络安全技术的交流与合作</li>
-          <li>为网络安全事业贡献力量</li>
-        </ul>
-
-        <h2>发展历程</h2>
-        <div class="timeline">
-          <div class="timeline-item">
-            <h3>2023年</h3>
-            <p>社团正式成立，招募首批成员</p>
-          </div>
-          <div class="timeline-item">
-            <h3>2024年</h3>
-            <p>举办首次校内CTF比赛，参与人数超过100人</p>
-          </div>
-          <div class="timeline-item">
-            <h3>2025年</h3>
-            <p>与多家企业建立合作关系，开展实习就业项目</p>
-          </div>
+        <!-- 加载状态 -->
+        <div v-if="loading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>加载社团信息中...</p>
         </div>
 
-        <h2>组织结构</h2>
-        <div class="organization">
-          <div class="org-item">
-            <h3>指导老师</h3>
-            <p>负责社团的指导和监督工作</p>
+        <!-- 错误状态 -->
+        <div v-else-if="error" class="error-container">
+          <p>{{ error }}</p>
+          <button @click="fetchAboutInfo" class="btn btn-primary">重试</button>
+        </div>
+
+        <!-- 数据展示 -->
+        <div v-else>
+          <h2>社团背景</h2>
+          <p>{{ aboutInfo.background }}</p>
+
+          <h2>社团宗旨</h2>
+          <p>我们的宗旨是：</p>
+          <ul>
+            <li v-for="(mission, index) in aboutInfo.missions" :key="index">{{ mission }}</li>
+          </ul>
+
+          <h2>发展历程</h2>
+          <div class="timeline">
+            <div class="timeline-item" v-for="(item, index) in aboutInfo.history" :key="index">
+              <h3>{{ item.year }}</h3>
+              <p>{{ item.description }}</p>
+            </div>
           </div>
-          <div class="org-item">
-            <h3>社长</h3>
-            <p>负责社团的全面工作</p>
-          </div>
-          <div class="org-item">
-            <h3>技术部</h3>
-            <p>负责技术研究和培训工作</p>
-          </div>
-          <div class="org-item">
-            <h3>宣传部</h3>
-            <p>负责社团的宣传和推广工作</p>
-          </div>
-          <div class="org-item">
-            <h3>外联部</h3>
-            <p>负责对外联系和合作工作</p>
+
+          <h2>组织结构</h2>
+          <div class="organization">
+            <div class="org-item" v-for="(dept, index) in aboutInfo.organization" :key="index">
+              <h3>{{ dept.name }}</h3>
+              <p>{{ dept.description }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -65,11 +53,79 @@
 </template>
 
 <script>
+import { aboutService } from '../services/aboutService';
+
 export default {
-  name: 'About'
-}
+  name: 'About',
+  data() {
+    return {
+      aboutInfo: {
+        background: '',
+        missions: [],
+        history: [],
+        organization: []
+      },
+      loading: true,
+      error: null
+    };
+  },
+  async mounted() {
+    await this.fetchAboutInfo();
+  },
+  methods: {
+    async fetchAboutInfo() {
+      this.loading = true;
+      this.error = null;
+      try {
+        // 调用API获取社团信息
+        const data = await aboutService.getAboutInfo();
+        this.aboutInfo = data;
+      } catch (err) {
+        this.error = '获取社团信息失败，请稍后重试';
+        console.error('Error fetching about info:', err);
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-/* 样式将在后续统一添加 */
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 错误状态样式 */
+.error-container {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--danger-color);
+}
+
+.error-container p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
 </style>

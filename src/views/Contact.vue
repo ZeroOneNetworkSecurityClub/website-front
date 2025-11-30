@@ -8,45 +8,55 @@
 
     <section class="contact-content">
       <div class="container">
-        <div class="contact-info">
-          <h2>联系方式</h2>
-          <div class="contact-details">
-            <div class="contact-item">
-              <h3>邮箱</h3>
-              <p>contact@lingyi-sec.com</p>
-            </div>
-            <div class="contact-item">
-              <h3>QQ群</h3>
-              <p>123456789</p>
-            </div>
-            <div class="contact-item">
-              <h3>微信公众号</h3>
-              <p>零壹网络安全社团</p>
-            </div>
-          </div>
-
-          <h2>社交媒体</h2>
-          <div class="social-links">
-            <a href="#" class="social-link">GitHub</a>
-            <a href="#" class="social-link">微博</a>
-            <a href="#" class="social-link">知乎</a>
-          </div>
+        <!-- 加载状态 -->
+        <div v-if="loading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>加载联系信息中...</p>
         </div>
 
-        <div class="join-us">
-          <h2>加入我们</h2>
-          <p>如果你对网络安全感兴趣，欢迎加入我们！我们期待你的加入，一起学习和成长。</p>
-          <h3>加入条件</h3>
-          <ul>
-            <li>热爱网络安全技术</li>
-            <li>具有团队合作精神</li>
-            <li>能够积极参与社团活动</li>
-          </ul>
-          <h3>加入方式</h3>
-          <p>1. 填写申请表（点击下方按钮下载）</p>
-          <p>2. 发送申请表至社团邮箱</p>
-          <p>3. 参加面试</p>
-          <a href="#" class="btn">下载申请表</a>
+        <!-- 错误状态 -->
+        <div v-else-if="error" class="error-container">
+          <p>{{ error }}</p>
+          <button @click="fetchContactInfo" class="btn btn-primary">重试</button>
+        </div>
+
+        <!-- 数据展示 -->
+        <div v-else>
+          <div class="contact-info">
+            <h2>联系方式</h2>
+            <div class="contact-details">
+              <div class="contact-item" v-for="(item, index) in contactInfo.details" :key="index">
+                <h3>{{ item.type }}</h3>
+                <p>{{ item.value }}</p>
+              </div>
+            </div>
+
+            <h2>社交媒体</h2>
+            <div class="social-links">
+              <a 
+                :href="link.url" 
+                class="social-link" 
+                v-for="(link, index) in contactInfo.socialLinks" 
+                :key="index"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ link.name }}
+              </a>
+            </div>
+          </div>
+
+          <div class="join-us">
+            <h2>加入我们</h2>
+            <p>{{ contactInfo.joinUs.description }}</p>
+            <h3>加入条件</h3>
+            <ul>
+              <li v-for="(condition, index) in contactInfo.joinUs.conditions" :key="index">{{ condition }}</li>
+            </ul>
+            <h3>加入方式</h3>
+            <p v-for="(step, index) in contactInfo.joinUs.steps" :key="index">{{ step }}</p>
+            <a :href="contactInfo.joinUs.applicationUrl" class="btn">下载申请表</a>
+          </div>
         </div>
       </div>
     </section>
@@ -54,11 +64,83 @@
 </template>
 
 <script>
+import { contactService } from '../services/contactService';
+
 export default {
-  name: 'Contact'
-}
+  name: 'Contact',
+  data() {
+    return {
+      contactInfo: {
+        details: [],
+        socialLinks: [],
+        joinUs: {
+          description: '',
+          conditions: [],
+          steps: [],
+          applicationUrl: '#'
+        }
+      },
+      loading: true,
+      error: null
+    };
+  },
+  async mounted() {
+    await this.fetchContactInfo();
+  },
+  methods: {
+    async fetchContactInfo() {
+      this.loading = true;
+      this.error = null;
+      try {
+        // 调用API获取联系信息
+        const data = await contactService.getContactInfo();
+        this.contactInfo = data;
+      } catch (err) {
+        this.error = '获取联系信息失败，请稍后重试';
+        console.error('Error fetching contact info:', err);
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-/* 样式将在后续统一添加 */
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 错误状态样式 */
+.error-container {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--danger-color);
+}
+
+.error-container p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
 </style>

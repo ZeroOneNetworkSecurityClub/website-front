@@ -8,22 +8,43 @@
 
     <section class="members-content">
       <div class="container">
-        <h2>核心成员</h2>
-        <div class="members-grid">
-          <div class="member-card" v-for="member in coreMembers" :key="member.id">
-            <div class="member-avatar">{{ member.name.charAt(0) }}</div>
-            <h3>{{ member.name }}</h3>
-            <p class="position">{{ member.position }}</p>
-            <p>{{ member.description }}</p>
-          </div>
+        <!-- 加载状态 -->
+        <div v-if="loading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>加载成员数据中...</p>
         </div>
 
-        <h2>成员风采</h2>
-        <div class="members-grid">
-          <div class="member-card" v-for="member in generalMembers" :key="member.id">
-            <div class="member-avatar">{{ member.name.charAt(0) }}</div>
-            <h3>{{ member.name }}</h3>
-            <p class="position">{{ member.position }}</p>
+        <!-- 错误状态 -->
+        <div v-else-if="error" class="error-container">
+          <p>{{ error }}</p>
+          <button @click="fetchMembers" class="btn btn-primary">重试</button>
+        </div>
+
+        <!-- 数据展示 -->
+        <div v-else>
+          <h2>核心成员</h2>
+          <div v-if="coreMembers.length > 0" class="members-grid">
+            <div class="member-card" v-for="member in coreMembers" :key="member.id">
+              <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+              <h3>{{ member.name }}</h3>
+              <p class="position">{{ member.position }}</p>
+              <p>{{ member.description }}</p>
+            </div>
+          </div>
+          <div v-else class="empty-state">
+            <p>暂无核心成员记录</p>
+          </div>
+
+          <h2>成员风采</h2>
+          <div v-if="generalMembers.length > 0" class="members-grid">
+            <div class="member-card" v-for="member in generalMembers" :key="member.id">
+              <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+              <h3>{{ member.name }}</h3>
+              <p class="position">{{ member.position }}</p>
+            </div>
+          </div>
+          <div v-else class="empty-state">
+            <p>暂无普通成员记录</p>
           </div>
         </div>
       </div>
@@ -32,63 +53,92 @@
 </template>
 
 <script>
+import { memberService } from '../services/memberService';
+
 export default {
   name: 'Members',
   data() {
     return {
-      coreMembers: [
-        {
-          id: 1,
-          name: '张三',
-          position: '社长',
-          description: '网络安全爱好者，擅长Web安全和渗透测试。'
-        },
-        {
-          id: 2,
-          name: '李四',
-          position: '副社长',
-          description: '专注于密码学和逆向工程研究。'
-        },
-        {
-          id: 3,
-          name: '王五',
-          position: '技术部部长',
-          description: '擅长系统安全和网络攻防技术。'
-        },
-        {
-          id: 4,
-          name: '赵六',
-          position: '宣传部部长',
-          description: '负责社团的宣传和推广工作。'
-        }
-      ],
-      generalMembers: [
-        {
-          id: 5,
-          name: '孙七',
-          position: '技术部成员'
-        },
-        {
-          id: 6,
-          name: '周八',
-          position: '技术部成员'
-        },
-        {
-          id: 7,
-          name: '吴九',
-          position: '宣传部成员'
-        },
-        {
-          id: 8,
-          name: '郑十',
-          position: '外联部成员'
-        }
-      ]
+      members: [],
+      loading: true,
+      error: null
+    };
+  },
+  async mounted() {
+    await this.fetchMembers();
+  },
+  methods: {
+    async fetchMembers() {
+      this.loading = true;
+      this.error = null;
+      try {
+        // 调用API获取所有成员
+        const data = await memberService.getMembers();
+        this.members = data;
+      } catch (err) {
+        this.error = '获取成员数据失败，请稍后重试';
+        console.error('Error fetching members:', err);
+      } finally {
+        this.loading = false;
+      }
+    }
+  },
+  computed: {
+    // 过滤核心成员
+    coreMembers() {
+      return this.members.filter(member => member.type === 'core');
+    },
+    // 过滤普通成员
+    generalMembers() {
+      return this.members.filter(member => member.type === 'general');
     }
   }
-}
+};
 </script>
 
 <style scoped>
-/* 样式将在后续统一添加 */
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 错误状态样式 */
+.error-container {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--danger-color);
+}
+
+.error-container p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--light-text);
+  font-size: 1.1rem;
+}
 </style>
