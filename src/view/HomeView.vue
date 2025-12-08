@@ -91,32 +91,33 @@
                 class="absolute top-0 right-0 bg-cyber-green text-cyber-black text-xs font-bold px-3 py-1 font-mono z-10">
               NEW
             </div>
-            <div class="h-64 bg-gray-800 relative overflow-hidden">
+            <div v-for="(activity, id) in activityList.slice(0,1)" :key="id"
+                 class="h-64 bg-gray-800 relative overflow-hidden">
               <!-- Abstract coding background for image placeholder -->
               <div class="absolute inset-0 bg-gradient-to-t from-cyber-black to-transparent z-10"></div>
               <div class="w-full h-full bg-gray-800 flex items-center justify-center">
                 <i class="fas fa-newspaper text-5xl text-gray-600"></i>
               </div>
               <div class="absolute bottom-0 left-0 p-6 z-20">
-                <span class="text-cyber-green text-xs font-mono mb-2 block">2023-10-24</span>
-                <h3 class="text-2xl font-bold text-white mb-2">第十五届校内 CTF 新生赛圆满结束</h3>
+                <span class="text-cyber-green text-xs font-mono mb-2 block">{{ activity.date }}</span>
+                <h3 class="text-2xl font-bold text-white mb-2">{{ activity.title }}</h3>
                 <p class="text-gray-300 text-sm line-clamp-2">
-                  恭喜所有获奖队伍！本次比赛Web题型突破性创新，Reverse方向涌现出多名黑马...</p>
+                  {{ activity.description }}</p>
               </div>
             </div>
           </div>
 
           <!-- Side List -->
           <div class="space-y-4">
-            <div v-for="(news, i) in newsList" :key="i"
+            <div v-for="(activity, id) in activityList.slice(1, 4)" :key="id"
                  class="cyber-card p-4 rounded-lg flex items-start space-x-4 cursor-pointer hover:bg-cyber-greenDim/20">
               <div class="flex-shrink-0 pt-1">
                 <div class="w-2 h-2 rounded-full bg-cyber-green animate-pulse"></div>
               </div>
               <div>
-                <span class="text-xs text-gray-500 font-mono block mb-1">{{ news.date }}</span>
+                <span class="text-xs text-gray-500 font-mono block mb-1">{{ activity.date }}</span>
                 <h4 class="text-white font-medium hover:text-cyber-green transition-colors text-sm">{{
-                    news.title
+                    activity.title
                   }}</h4>
               </div>
             </div>
@@ -130,16 +131,49 @@
 <script setup>
 import {onMounted, onUnmounted, ref} from 'vue';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import {getActivityList} from "@/api/activity.js";
 
+/**
+ * 响应式变量，用于跟踪页面是否已滚动
+ * @type {import('vue').Ref<boolean>}
+ */
 const isScrolled = ref(false);
+
+/**
+ * 响应式变量，用于控制移动端菜单的开合状态
+ * @type {import('vue').Ref<boolean>}
+ */
 const mobileMenuOpen = ref(false);
+
+/**
+ * 响应式变量，用于标识当前活动的页面区域
+ * @type {import('vue').Ref<string>}
+ */
 const activeSection = ref('hero');
 
 // Hero Typing Effect
+/**
+ * 完整的打字文本内容
+ * @type {string}
+ */
 const fullText = "Hack the Planet. Secure the Future.";
+
+/**
+ * 响应式变量，用于存储当前已显示的打字文本
+ * @type {import('vue').Ref<string>}
+ */
 const typedText = ref("");
+
+/**
+ * 当前打字效果的字符索引位置
+ * @type {number}
+ */
 let charIndex = 0;
 
+/**
+ * 学习方向数据数组
+ * @type {Array<{title: string, desc: string, icon: string, difficulty: string}>}
+ */
 const tracks = [
   {
     title: 'Web Security',
@@ -167,24 +201,58 @@ const tracks = [
   }
 ];
 
+/**
+ * 统计数据数组
+ * @type {Array<{value: string, label: string}>}
+ */
 const stats = [
-  {value: '500+', label: 'Members'},
-  {value: '42', label: 'CTF Wins'},
-  {value: '128', label: 'Workshops'},
+  {value: '30+', label: 'Members'},
+  {value: '12', label: 'CTF Wins'},
+  {value: '4', label: 'Workshops'},
   {value: '1024', label: 'Flags'}
 ];
 
-const newsList = [
-  {title: '线下沙龙：内网渗透基础与实战', date: '2023-10-15'},
-  {title: '招新宣讲会将在周五晚7点举行', date: '2023-09-28'},
-  {title: '祝贺战队在 CISCN 获得一等奖', date: '2023-08-20'}
-];
+/**
+ * 活动列表数据
+ * @type {import('vue').Ref<Array>}
+ */
+const activityList = ref([]);
+
+/**
+ * 获取活动列表数据并更新到activityList响应式变量中
+ * 处理可能的API错误并提供默认空数组
+ */
+function getActivity() {
+  getActivityList().then(res => {
+    // 确保返回的数据是数组格式
+    if (Array.isArray(res)) {
+      activityList.value = res;
+    } else if (res && Array.isArray(res.data)) {
+      activityList.value = res.data;
+    } else {
+      activityList.value = []; // 设置为空数组作为后备
+    }
+  }).catch(err => {
+    console.error('获取活动列表失败:', err);
+    activityList.value = []; // 发生错误时设置为空数组
+  })
+}
+
+getActivity();
+console.log(activityList.value)
 
 // Scroll Handling
+/**
+ * 处理页面滚动事件，当滚动超过20像素时更新isScrolled状态
+ */
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20;
 };
 
+/**
+ * 平滑滚动到指定ID的页面元素
+ * @param {string} id - 目标元素的ID
+ */
 const scrollTo = (id) => {
   if (id === '#') return;
   const element = document.getElementById(id);
@@ -195,11 +263,19 @@ const scrollTo = (id) => {
   }
 };
 
+/**
+ * 移动端导航点击处理函数
+ * @param {string} id - 目标元素的ID
+ */
 const mobileNavClick = (id) => {
   scrollTo(id);
 };
 
 // Typing Animation Logic
+/**
+ * 打字机效果实现函数
+ * 逐个字符地将fullText的内容显示到typedText中
+ */
 const typeWriter = () => {
   if (charIndex < fullText.length) {
     typedText.value += fullText.charAt(charIndex);
@@ -209,6 +285,10 @@ const typeWriter = () => {
 };
 
 // Matrix Rain Effect
+/**
+ * 初始化矩阵雨背景动画效果
+ * @returns {number|null} 返回setInterval的ID或null（如果初始化失败）
+ */
 const initMatrix = () => {
   const canvas = document.getElementById('matrix-bg');
   if (!canvas) {
@@ -223,6 +303,9 @@ const initMatrix = () => {
   }
 
   // Set canvas size
+  /**
+   * 调整canvas大小以适应窗口尺寸
+   */
   const resizeCanvas = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -235,6 +318,9 @@ const initMatrix = () => {
   const columns = canvas.width / fontSize;
   const drops = Array(Math.floor(columns)).fill(1);
 
+  /**
+   * 绘制矩阵雨动画帧
+   */
   const draw = () => {
     // 更明显的黑色半透明层来创建拖尾效果
     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -258,8 +344,16 @@ const initMatrix = () => {
   return setInterval(draw, 100); // 调整速度让效果更明显
 };
 
+/**
+ * 矩阵动画的定时器ID
+ * @type {number}
+ */
 let matrixInterval;
 
+/**
+ * Vue组件挂载时执行的生命周期钩子
+ * 注册事件监听器，启动动画和打字效果
+ */
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   setTimeout(typeWriter, 500);
@@ -271,6 +365,10 @@ onMounted(() => {
   }
 });
 
+/**
+ * Vue组件卸载时执行的生命周期钩子
+ * 清理事件监听器和定时器，防止内存泄漏
+ */
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
   if (matrixInterval) clearInterval(matrixInterval);

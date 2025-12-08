@@ -1,98 +1,5 @@
-<script setup>
-
-const historyLogs = [
-  {
-    year: '2023',
-    tag: 'MILESTONE',
-    title: 'CISCN 全国一等奖',
-    content: '战队主力 "0xAlpha" 在第十六届全国大学生信息安全竞赛中突围，获得华南赛区特等奖及全国总决赛一等奖。'
-  },
-  {
-    year: '2022',
-    tag: 'EXPANSION',
-    title: '实验室 2.0 启用',
-    content: '社团获得学院支持，迁入全新的网络安全攻防实验室，部署了私有云靶场平台，服务器算力提升 400%。'
-  },
-  {
-    year: '2021',
-    tag: 'INIT',
-    title: '社团成立',
-    content: '三位创始人以 "White Hat, Black Heart" 为口号，在旧机房成立了 0xShield。首批招新 20 人。'
-  }
-];
-
-const members = [
-  {
-    id: 'UID_001',
-    name: 'Alex "Root"',
-    role: 'President / Pwn',
-    avatarIcon: 'fas fa-user-astronaut',
-    skills: [
-      {name: 'Binary Exploitation', level: 95},
-      {name: 'C/C++', level: 90},
-      {name: 'Kernel', level: 80}
-    ]
-  },
-  {
-    id: 'UID_002',
-    name: 'Sarah "Cipher"',
-    role: 'Vice President / Crypto',
-    avatarIcon: 'fas fa-user-secret',
-    skills: [
-      {name: 'Cryptography', level: 98},
-      {name: 'Python', level: 95},
-      {name: 'Mathematics', level: 85}
-    ]
-  },
-  {
-    id: 'UID_003',
-    name: 'Mike "Spider"',
-    role: 'Web Head / Penetration',
-    avatarIcon: 'fas fa-user-ninja',
-    skills: [
-      {name: 'Web Security', level: 92},
-      {name: 'Network Pentest', level: 88},
-      {name: 'Java', level: 75}
-    ]
-  },
-  {
-    id: 'UID_004',
-    name: 'Vera "Re"',
-    role: 'Reverse Engineering',
-    avatarIcon: 'fas fa-bug',
-    skills: [
-      {name: 'Assembly', level: 90},
-      {name: 'Malware Analysis', level: 85},
-      {name: 'Android', level: 70}
-    ]
-  },
-  {
-    id: 'UID_005',
-    name: 'Ghost',
-    role: 'Misc / Forensics',
-    avatarIcon: 'fas fa-ghost',
-    skills: [
-      {name: 'Data Forensics', level: 85},
-      {name: 'Steganography', level: 90},
-      {name: 'Bash Scripting', level: 80}
-    ]
-  },
-  {
-    id: 'UID_006',
-    name: 'Bot_404',
-    role: 'Infrastructure',
-    avatarIcon: 'fas fa-robot',
-    skills: [
-      {name: 'DevOps', level: 95},
-      {name: 'Docker/K8s', level: 90},
-      {name: 'Network Admin', level: 85}
-    ]
-  }
-];
-</script>
-
 <template>
-  <div class="relative min-h-screen flex flex-col">
+  <section class="relative min-h-screen flex flex-col">
     <div class="scanline"></div>
 
     <!-- Main Content -->
@@ -242,16 +149,101 @@ const members = [
         </div>
       </section>
     </main>
-
-    <!-- Simple Footer -->
-    <footer class="border-t border-gray-900 bg-cyber-black py-8 text-center">
-      <p class="text-gray-600 font-mono text-sm">
-        <span class="text-cyber-green">&lt;/&gt;</span> with <i class="fas fa-heart text-red-900"></i> by 0xShield Dev
-        Team
-      </p>
-    </footer>
-  </div>
+  </section>
 </template>
+
+<script setup>
+
+const historyLogs = [
+  {
+    year: '2023',
+    tag: 'MILESTONE',
+    title: 'CISCN 全国一等奖',
+    content: '战队主力 "0xAlpha" 在第十六届全国大学生信息安全竞赛中突围，获得华南赛区特等奖及全国总决赛一等奖。'
+  },
+  {
+    year: '2022',
+    tag: 'EXPANSION',
+    title: '实验室 2.0 启用',
+    content: '社团获得学院支持，迁入全新的网络安全攻防实验室，部署了私有云靶场平台，服务器算力提升 400%。'
+  },
+  {
+    year: '2021',
+    tag: 'INIT',
+    title: '社团成立',
+    content: '三位创始人以 "White Hat, Black Heart" 为口号，在旧机房成立了 0xShield。首批招新 20 人。'
+  }
+];
+
+const members = [
+  {
+    id: 'UID_001',
+    name: 'Alex "Root"',
+    role: 'President / Pwn',
+    avatarIcon: 'fas fa-user-astronaut',
+    skills: [
+      {name: 'Binary Exploitation', level: 95},
+      {name: 'C/C++', level: 90},
+      {name: 'Kernel', level: 80}
+    ]
+  },
+  {
+    id: 'UID_002',
+    name: 'Sarah "Cipher"',
+    role: 'Vice President / Crypto',
+    avatarIcon: 'fas fa-user-secret',
+    skills: [
+      {name: 'Cryptography', level: 98},
+      {name: 'Python', level: 95},
+      {name: 'Mathematics', level: 85}
+    ]
+  },
+  {
+    id: 'UID_003',
+    name: 'Mike "Spider"',
+    role: 'Web Head / Penetration',
+    avatarIcon: 'fas fa-user-ninja',
+    skills: [
+      {name: 'Web Security', level: 92},
+      {name: 'Network Pentest', level: 88},
+      {name: 'Java', level: 75}
+    ]
+  },
+  {
+    id: 'UID_004',
+    name: 'Vera "Re"',
+    role: 'Reverse Engineering',
+    avatarIcon: 'fas fa-bug',
+    skills: [
+      {name: 'Assembly', level: 90},
+      {name: 'Malware Analysis', level: 85},
+      {name: 'Android', level: 70}
+    ]
+  },
+  {
+    id: 'UID_005',
+    name: 'Ghost',
+    role: 'Misc / Forensics',
+    avatarIcon: 'fas fa-ghost',
+    skills: [
+      {name: 'Data Forensics', level: 85},
+      {name: 'Steganography', level: 90},
+      {name: 'Bash Scripting', level: 80}
+    ]
+  },
+  {
+    id: 'UID_006',
+    name: 'Bot_404',
+    role: 'Infrastructure',
+    avatarIcon: 'fas fa-robot',
+    skills: [
+      {name: 'DevOps', level: 95},
+      {name: 'Docker/K8s', level: 90},
+      {name: 'Network Admin', level: 85}
+    ]
+  }
+];
+</script>
 
 <style scoped>
 /* Scanline Effect */

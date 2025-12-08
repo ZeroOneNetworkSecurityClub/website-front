@@ -1,149 +1,5 @@
-<script setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue';
-
-const currentTime = ref('');
-const activeFilter = ref('all');
-const searchQuery = ref('');
-
-// Countdown Logic
-const countdown = ref({days: '00', hours: '00', minutes: '00', seconds: '00'});
-const targetDate = new Date('2023-11-20T09:00:00').getTime(); // Example date
-
-const updateCountdown = () => {
-  // For demo purposes, let's just make it a random future date if expired
-  // In real app, use targetDate
-  const now = new Date().getTime();
-  // Mocking a future date for demo visual
-  const demoTarget = now + 258400000;
-
-  const distance = demoTarget - now;
-
-  countdown.value.days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-  countdown.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-  countdown.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-  countdown.value.seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-};
-
-const filters = [
-  {label: './ALL', value: 'all'},
-  {label: './CTF', value: 'ctf'},
-  {label: './WORKSHOP', value: 'workshop'},
-  {label: './SALON', value: 'salon'}
-];
-
-const events = [
-  {
-    id: 1,
-    title: 'Web Security 101: SQL Injection',
-    date: '2023-10-28',
-    type: 'workshop',
-    status: 'finished',
-    desc: '由 Spider 带领大家深入浅出地学习 SQL 注入原理，包括布尔盲注和报错注入。',
-    tags: ['sqlmap', 'burpsuite', 'web']
-  },
-  {
-    id: 2,
-    title: 'Mini-CTF: 新生挑战赛',
-    date: '2023-11-05',
-    type: 'ctf',
-    status: 'upcoming',
-    desc: '面向新成员的轻量级 CTF 比赛，包含 Web、Crypto 和 Misc 题目。前三名有机械键盘奖励。',
-    tags: ['competition', 'beginner', 'prizes']
-  },
-  {
-    id: 3,
-    title: '周五沙龙：APT 攻击案例分析',
-    date: '2023-10-14',
-    type: 'salon',
-    status: 'finished',
-    desc: '复盘近期著名的供应链攻击事件，分析黑客组织的渗透路径。',
-    tags: ['apt', 'red-team', 'case-study']
-  },
-  {
-    id: 4,
-    title: 'Linux Kernel Pwn 入门',
-    date: '2023-11-12',
-    type: 'workshop',
-    status: 'upcoming',
-    desc: '高阶课程。需要具备 C 语言和操作系统基础。我们将尝试复现 Dirty Pipe 漏洞。',
-    tags: ['kernel', 'exploit', 'c']
-  },
-  {
-    id: 5,
-    title: 'DefCon 观影会 & 披萨派对',
-    date: '2023-09-20',
-    type: 'salon',
-    status: 'finished',
-    desc: '一起观看 DefCon 31 的精彩演讲录像，享受美食与极客文化。',
-    tags: ['social', 'defcon', 'food']
-  },
-  {
-    id: 6,
-    title: 'XSS 跨站脚本攻击实战',
-    date: '2023-11-18',
-    type: 'workshop',
-    status: 'upcoming',
-    desc: '搭建本地靶场，演示存储型与反射型 XSS 的利用与防御代码编写。',
-    tags: ['javascript', 'xss', 'defense']
-  }
-];
-
-const filteredEvents = computed(() => {
-  return events.filter(event => {
-    const matchesType = activeFilter.value === 'all' || event.type === activeFilter.value;
-    const matchesSearch = event.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        event.desc.toLowerCase().includes(searchQuery.value.toLowerCase());
-    return matchesType && matchesSearch;
-  });
-});
-
-// Utilities
-const getStatusColor = (status) => {
-  return status === 'upcoming' ? 'bg-cyber-green' : 'bg-gray-700';
-};
-
-const getIcon = (type) => {
-  const map = {
-    'ctf': 'fas fa-flag',
-    'workshop': 'fas fa-laptop-code',
-    'salon': 'fas fa-comments',
-    'social': 'fas fa-glass-cheers'
-  };
-  return map[type] || 'fas fa-calendar';
-};
-
-const getIconColor = (type) => {
-  const map = {
-    'ctf': '#ff2a2a', // Red for combat
-    'workshop': '#00ff41', // Green for code
-    'salon': '#00f0ff', // Blue for talk
-  };
-  return map[type] || '#ccc';
-};
-
-const updateTime = () => {
-  const now = new Date();
-  currentTime.value = now.toLocaleTimeString('en-GB', {hour12: false});
-};
-
-let timerInterval;
-let timeInterval;
-
-onMounted(() => {
-  timerInterval = setInterval(updateCountdown, 1000);
-  timeInterval = setInterval(updateTime, 1000);
-  updateCountdown();
-  updateTime();
-});
-
-onUnmounted(() => {
-  clearInterval(timerInterval);
-  clearInterval(timeInterval);
-});
-</script>
-
 <template>
-  <div class="relative min-h-screen flex flex-col font-sans antialiased bg-hex-pattern">
+  <section class="relative min-h-screen flex flex-col font-sans antialiased bg-hex-pattern">
 
     <!-- Main Content -->
     <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -184,7 +40,8 @@ onUnmounted(() => {
           </div>
 
           <!-- Info -->
-          <div class="lg:col-span-2 p-8 flex flex-col justify-center">
+          <div v-for="(activity,id) in events.slice(0,1)" :key="id"
+              class="lg:col-span-2 p-8 flex flex-col justify-center">
             <div class="flex items-center space-x-3 mb-4">
               <span
                   class="px-2 py-0.5 border border-cyber-red text-cyber-red text-xs font-mono rounded">LIVE_EVENT</span>
@@ -277,7 +134,7 @@ onUnmounted(() => {
 
             <h3 class="text-xl font-bold text-white mb-2 font-mono group-hover:text-cyber-green transition-colors">
               {{ event.title }}</h3>
-            <p class="text-gray-400 text-sm mb-4 flex-grow">{{ event.desc }}</p>
+            <p class="text-gray-400 text-sm mb-4 flex-grow">{{ event.description }}</p>
 
             <!-- Tech Stack Tags -->
             <div class="flex flex-wrap gap-2 mb-6">
@@ -286,8 +143,9 @@ onUnmounted(() => {
             </div>
 
             <div class="border-t border-gray-800 pt-4 flex justify-between items-center mt-auto">
-                            <span :class="event.status === 'upcoming' ? 'text-cyber-green animate-pulse' : 'text-gray-600'"
-                                  class="text-xs font-mono">
+                            <span
+                                :class="event.status === 'upcoming' ? 'text-cyber-green animate-pulse' : 'text-gray-600'"
+                                class="text-xs font-mono">
                                 [{{ event.status === 'upcoming' ? 'ONLINE' : 'OFFLINE' }}]
                             </span>
               <button class="text-sm font-mono font-bold hover:text-cyber-green transition-colors flex items-center">
@@ -305,15 +163,152 @@ onUnmounted(() => {
       </div>
 
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-black/80 border-t border-gray-900 py-6 text-center">
-      <div class="text-xs text-gray-600 font-mono">
-        SECURE CHANNEL ESTABLISHED. END OF TRANSMISSION.
-      </div>
-    </footer>
-  </div>
+  </section>
 </template>
+
+<script setup>
+import {computed, onMounted, onUnmounted, ref} from 'vue';
+
+const currentTime = ref('');
+const activeFilter = ref('all');
+const searchQuery = ref('');
+
+// Countdown Logic
+const countdown = ref({days: '00', hours: '00', minutes: '00', seconds: '00'});
+const targetDate = new Date('2023-11-20T09:00:00').getTime(); // Example date
+
+const updateCountdown = () => {
+  // For demo purposes, let's just make it a random future date if expired
+  // In real app, use targetDate
+  const now = new Date().getTime();
+  // Mocking a future date for demo visual
+  const demoTarget = now + 258400000;
+
+  const distance = demoTarget - now;
+
+  countdown.value.days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+  countdown.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+  countdown.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+  countdown.value.seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+};
+
+const filters = [
+  {label: './ALL', value: 'all'},
+  {label: './CTF', value: 'ctf'},
+  {label: './WORKSHOP', value: 'workshop'},
+  {label: './SALON', value: 'salon'}
+];
+
+const events = [
+  {
+    id: 1,
+    title: 'Web Security 101: SQL Injection',
+    date: '2023-10-28',
+    type: 'workshop',
+    status: 'finished',
+    description: '由 Spider 带领大家深入浅出地学习 SQL 注入原理，包括布尔盲注和报错注入。',
+    tags: ['sqlmap', 'burpsuite', 'web']
+  },
+  {
+    id: 2,
+    title: 'Mini-CTF: 新生挑战赛',
+    date: '2023-11-05',
+    type: 'ctf',
+    status: 'upcoming',
+    description: '面向新成员的轻量级 CTF 比赛，包含 Web、Crypto 和 Misc 题目。前三名有机械键盘奖励。',
+    tags: ['competition', 'beginner', 'prizes']
+  },
+  {
+    id: 3,
+    title: '周五沙龙：APT 攻击案例分析',
+    date: '2023-10-14',
+    type: 'salon',
+    status: 'finished',
+    description: '复盘近期著名的供应链攻击事件，分析黑客组织的渗透路径。',
+    tags: ['apt', 'red-team', 'case-study']
+  },
+  {
+    id: 4,
+    title: 'Linux Kernel Pwn 入门',
+    date: '2023-11-12',
+    type: 'workshop',
+    status: 'upcoming',
+    description: '高阶课程。需要具备 C 语言和操作系统基础。我们将尝试复现 Dirty Pipe 漏洞。',
+    tags: ['kernel', 'exploit', 'c']
+  },
+  {
+    id: 5,
+    title: 'DefCon 观影会 & 披萨派对',
+    date: '2023-09-20',
+    type: 'salon',
+    status: 'finished',
+    description: '一起观看 DefCon 31 的精彩演讲录像，享受美食与极客文化。',
+    tags: ['social', 'defcon', 'food']
+  },
+  {
+    id: 6,
+    title: 'XSS 跨站脚本攻击实战',
+    date: '2023-11-18',
+    type: 'workshop',
+    status: 'upcoming',
+    description: '搭建本地靶场，演示存储型与反射型 XSS 的利用与防御代码编写。',
+    tags: ['javascript', 'xss', 'defense']
+  }
+];
+
+const filteredEvents = computed(() => {
+  return events.filter(event => {
+    const matchesType = activeFilter.value === 'all' || event.type === activeFilter.value;
+    const matchesSearch = event.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchQuery.value.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+});
+
+// Utilities
+const getStatusColor = (status) => {
+  return status === 'upcoming' ? 'bg-cyber-green' : 'bg-gray-700';
+};
+
+const getIcon = (type) => {
+  const map = {
+    'ctf': 'fas fa-flag',
+    'workshop': 'fas fa-laptop-code',
+    'salon': 'fas fa-comments',
+    'social': 'fas fa-glass-cheers'
+  };
+  return map[type] || 'fas fa-calendar';
+};
+
+const getIconColor = (type) => {
+  const map = {
+    'ctf': '#ff2a2a', // Red for combat
+    'workshop': '#00ff41', // Green for code
+    'salon': '#00f0ff', // Blue for talk
+  };
+  return map[type] || '#ccc';
+};
+
+const updateTime = () => {
+  const now = new Date();
+  currentTime.value = now.toLocaleTimeString('en-GB', {hour12: false});
+};
+
+let timerInterval;
+let timeInterval;
+
+onMounted(() => {
+  timerInterval = setInterval(updateCountdown, 1000);
+  timeInterval = setInterval(updateTime, 1000);
+  updateCountdown();
+  updateTime();
+});
+
+onUnmounted(() => {
+  clearInterval(timerInterval);
+  clearInterval(timeInterval);
+});
+</script>
 
 <style scoped>
 /* Radar Animation */
