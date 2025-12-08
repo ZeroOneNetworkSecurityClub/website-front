@@ -1,9 +1,4 @@
-<script setup>
-
-</script>
-
 <template>
-  <!-- ================= FOOTER START ================= -->
   <footer class="bg-hacker-gray border-t border-gray-800 pt-12 pb-6 relative overflow-hidden">
     <!-- Matrix Deco Background -->
     <div class="absolute top-0 right-0 p-4 opacity-5 select-none pointer-events-none">
@@ -67,21 +62,29 @@ SYSTEM_EOF
           </ul>
         </div>
 
-        <!-- Newsletter / Terminal Column -->
+        <!-- Contact Us Column -->
         <div>
-          <h3 class="text-white font-mono font-bold mb-4 text-sm uppercase tracking-wider">>> SUBSCRIBE</h3>
-          <p class="text-gray-500 text-xs mb-3">Get the latest exploits delivered to your inbox.</p>
-          <div class="flex gap-2">
-            <el-input
-                v-model="email"
-                class="terminal-input"
-                placeholder="user@domain.com"
-                size="small"
-            >
-              <template #prefix>></template>
-            </el-input>
-            <el-button icon="Right" size="small" type="primary" @click="subscribe"/>
-          </div>
+          <h3 class="text-white font-mono font-bold mb-4 text-sm uppercase tracking-wider">>> CONTACT US</h3>
+          <ul class="space-y-2 text-sm text-gray-400 font-mono">
+            <li class="flex items-start gap-2">
+              <el-icon class="mt-0.5 flex-shrink-0">
+                <component :is="'Location'"/>
+              </el-icon>
+              <span>连云港市海州区江苏财会职业学院行健楼#3网络安全实训基地</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <el-icon class="mt-0.5 flex-shrink-0">
+                <component :is="'Phone'"/>
+              </el-icon>
+              <span>+86 400-HACKER</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <el-icon class="mt-0.5 flex-shrink-0">
+                <component :is="'Message'"/>
+              </el-icon>
+              <span>contact@0xshield.cn</span>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -101,26 +104,42 @@ SYSTEM_EOF
       </div>
     </div>
   </footer>
-  <!-- ================= FOOTER END ================= -->
 </template>
+
+<script setup>
+import {computed, onMounted, ref} from "vue";
+
+const ping = ref(24);
+const terminalLog = ref('System Stable');
+
+// Simulate live server stats
+const simulatePing = () => {
+  ping.value = Math.floor(Math.random() * 40) + 15;
+  const logs = ['System Stable', 'Scanning Ports...', 'Updating DB...', 'Traffic Normal', 'Analyzing Packets'];
+  terminalLog.value = logs[Math.floor(Math.random() * logs.length)];
+};
+
+const pingColor = computed(() => {
+  if (ping.value < 50) return 'text-hacker-green';
+  if (ping.value < 100) return 'text-yellow-500';
+  return 'text-red-500';
+});
+
+onMounted(() => {
+  setInterval(simulatePing, 3000);
+});
+</script>
 
 <style>
 /* 底部终端光标 */
 .cursor-blink {
   animation: blink 1s step-end infinite;
 }
-@keyframes blink { 50% { opacity: 0; } }
 
-/* 极客输入框 (Footer用) */
-.terminal-input .el-input__wrapper {
-  background-color: #0d1117 !important;
-  box-shadow: none !important;
-  border: 1px solid #30363d !important;
-  color: #00ff41 !important;
-  font-family: 'JetBrains Mono', monospace;
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
-.terminal-input .el-input__wrapper:hover,
-.terminal-input .el-input__wrapper.is-focus {
-  border-color: #00ff41 !important;
-}
+
 </style>

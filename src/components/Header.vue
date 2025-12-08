@@ -1,9 +1,3 @@
-<script setup>
-import {useUserStore} from '../stores/user'
-
-const userStore = useUserStore()
-</script>
-
 <template>
   <!-- ================= HEADER START ================= -->
   <nav class="fixed w-full z-50 bg-hacker-dark/90 backdrop-blur border-b border-gray-800">
@@ -27,10 +21,10 @@ const userStore = useUserStore()
         <!-- Desktop Menu -->
         <div class="hidden md:block">
           <div class="ml-10 flex items-baseline space-x-8 font-mono text-sm">
-            <a class="nav-link text-white px-3 py-2" href="#">/home</a>
-            <a class="nav-link text-gray-300 px-3 py-2" href="#">./about</a>
-            <a class="nav-link text-gray-300 px-3 py-2" href="#">./activities</a>
-            <a class="nav-link text-gray-300 px-3 py-2" href="#">./ctf_rank</a>
+            <router-link class="nav-link text-white px-3 py-2" to="/">/home</router-link>
+            <router-link class="nav-link text-gray-300 px-3 py-2" to="/about">./about</router-link>
+            <router-link class="nav-link text-gray-300 px-3 py-2" to="/activity">./activities</router-link>
+            <a class="nav-link text-gray-300 px-3 py-2" href="https://docs.websec.org.cn" target="_blank">./docs</a>
           </div>
         </div>
 
@@ -82,23 +76,54 @@ const userStore = useUserStore()
   <!-- ================= HEADER END ================= -->
 </template>
 
+<script setup>
+import {ref} from "vue";
+import {ElMessage} from "element-plus";
+
+const mobileMenuOpen = ref(false);
+
+const handleLogin = () => {
+  ElMessage.info('Redirecting to Auth Gateway...');
+};
+
+</script>
+
 <style>
 /* 导航链接悬停特效 */
 .nav-link {
   position: relative;
   transition: all 0.3s;
 }
+
 .nav-link::before, .nav-link::after {
   position: absolute;
   opacity: 0;
   transition: all 0.3s;
   color: #00ff41;
 }
-.nav-link::before { content: '['; left: -10px; }
-.nav-link::after { content: ']'; right: -10px; }
 
-.nav-link:hover { color: #00ff41; }
-.nav-link:hover::before { opacity: 1; left: -5px; }
-.nav-link:hover::after { opacity: 1; right: -5px; }
+.nav-link::before {
+  content: '[';
+  left: -10px;
+}
+
+.nav-link::after {
+  content: ']';
+  right: -10px;
+}
+
+.nav-link:hover {
+  color: #00ff41;
+}
+
+.nav-link:hover::before {
+  opacity: 1;
+  left: -5px;
+}
+
+.nav-link:hover::after {
+  opacity: 1;
+  right: -5px;
+}
 
 </style>

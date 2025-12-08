@@ -1,5 +1,135 @@
+<template>
+  <div
+      class="relative min-h-screen flex flex-col font-sans antialiased selection:bg-cyber-green selection:text-cyber-black">
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative flex items-center justify-center min-h-screen pt-16">
+      <div class="text-center px-4 max-w-4xl mx-auto z-10">
+        <div
+            class="inline-block px-3 py-1 mb-4 border border-cyber-green/30 rounded-full bg-cyber-greenDim backdrop-blur-sm">
+          <span class="text-cyber-green font-mono text-xs tracking-widest">SYSTEM_STATUS: ONLINE</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 font-mono tracking-tight text-white">
+          WE ARE <span class="text-cyber-green neon-text">01xWEBSEC</span>
+        </h1>
+        <div class="h-16 md:h-20 flex items-center justify-center">
+          <p class="text-xl md:text-2xl text-gray-400 font-mono">
+            <span class="text-cyber-green">root@kali:~$</span> {{ typedText }}<span
+              class="animate-blink bg-cyber-green w-3 h-6 inline-block align-middle ml-1"></span>
+          </p>
+        </div>
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+          <button
+              class="px-8 py-3 bg-cyber-green text-cyber-black font-bold font-mono rounded hover:bg-white transition-all duration-300 hover:shadow-[0_0_20px_#00ff41]">
+            开始 CTF 之旅
+          </button>
+          <button
+              class="px-8 py-3 border border-gray-600 text-gray-300 font-bold font-mono rounded hover:border-cyber-green hover:text-cyber-green transition-all duration-300 bg-cyber-black/50 backdrop-blur-sm">
+            了解更多
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Directions Section -->
+    <section id="about" class="py-20 bg-gradient-to-b from-transparent to-cyber-dark/80 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-mono"><span class="text-cyber-green">#</span>
+            学习方向</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            加入我们，探索网络安全的无限可能。无论你是新手还是老鸟，这里都有属于你的战场。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="(track, index) in tracks" :key="index" class="cyber-card p-6 rounded-lg group">
+            <div
+                class="w-12 h-12 bg-cyber-greenDim rounded-lg flex items-center justify-center mb-4 group-hover:bg-cyber-green transition-colors duration-300">
+              <i :class="track.icon"
+                 class="text-2xl text-cyber-green group-hover:text-cyber-black transition-colors duration-300"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2 font-mono">{{ track.title }}</h3>
+            <p class="text-gray-400 text-sm mb-4 h-16">{{ track.desc }}</p>
+            <div class="w-full bg-gray-800 rounded-full h-1.5 mt-2">
+              <div :style="{ width: track.difficulty }" class="bg-cyber-green h-1.5 rounded-full"></div>
+            </div>
+            <span class="text-xs text-gray-500 mt-1 inline-block font-mono">难度系数: {{ track.difficulty }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 border-y border-cyber-green/10 bg-cyber-black/50 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div v-for="(stat, index) in stats" :key="index">
+            <div class="text-4xl font-bold text-white font-mono mb-2">{{ stat.value }}</div>
+            <div class="text-cyber-green text-sm font-mono uppercase tracking-wider">{{ stat.label }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- News & Events -->
+    <section id="news" class="py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-12 border-b border-gray-800 pb-4">
+          <div>
+            <h2 class="text-3xl font-bold text-white font-mono"><span class="text-cyber-green">./</span> 最新动态</h2>
+          </div>
+          <a class="text-sm text-cyber-green font-mono hover:underline hidden sm:block" href="#">VIEW_ALL_LOGS</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Main News -->
+          <div class="md:col-span-2 cyber-card rounded-xl overflow-hidden relative group">
+            <div
+                class="absolute top-0 right-0 bg-cyber-green text-cyber-black text-xs font-bold px-3 py-1 font-mono z-10">
+              NEW
+            </div>
+            <div class="h-64 bg-gray-800 relative overflow-hidden">
+              <!-- Abstract coding background for image placeholder -->
+              <div class="absolute inset-0 bg-gradient-to-t from-cyber-black to-transparent z-10"></div>
+              <div class="w-full h-full bg-gray-800 flex items-center justify-center">
+                <i class="fas fa-newspaper text-5xl text-gray-600"></i>
+              </div>
+              <div class="absolute bottom-0 left-0 p-6 z-20">
+                <span class="text-cyber-green text-xs font-mono mb-2 block">2023-10-24</span>
+                <h3 class="text-2xl font-bold text-white mb-2">第十五届校内 CTF 新生赛圆满结束</h3>
+                <p class="text-gray-300 text-sm line-clamp-2">
+                  恭喜所有获奖队伍！本次比赛Web题型突破性创新，Reverse方向涌现出多名黑马...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side List -->
+          <div class="space-y-4">
+            <div v-for="(news, i) in newsList" :key="i"
+                 class="cyber-card p-4 rounded-lg flex items-start space-x-4 cursor-pointer hover:bg-cyber-greenDim/20">
+              <div class="flex-shrink-0 pt-1">
+                <div class="w-2 h-2 rounded-full bg-cyber-green animate-pulse"></div>
+              </div>
+              <div>
+                <span class="text-xs text-gray-500 font-mono block mb-1">{{ news.date }}</span>
+                <h4 class="text-white font-medium hover:text-cyber-green transition-colors text-sm">{{
+                    news.title
+                  }}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
 <script setup>
 import {onMounted, onUnmounted, ref} from 'vue';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const isScrolled = ref(false);
 const mobileMenuOpen = ref(false);
@@ -146,135 +276,6 @@ onUnmounted(() => {
   if (matrixInterval) clearInterval(matrixInterval);
 });
 </script>
-
-<template>
-  <div
-      class="relative min-h-screen flex flex-col font-sans antialiased selection:bg-cyber-green selection:text-cyber-black">
-    <!-- Matrix Background -->
-    <canvas id="matrix-bg"></canvas>
-
-    <!-- Hero Section -->
-    <section id="hero" class="relative flex items-center justify-center min-h-screen pt-16">
-      <div class="text-center px-4 max-w-4xl mx-auto z-10">
-        <div
-            class="inline-block px-3 py-1 mb-4 border border-cyber-green/30 rounded-full bg-cyber-greenDim backdrop-blur-sm">
-          <span class="text-cyber-green font-mono text-xs tracking-widest">SYSTEM_STATUS: ONLINE</span>
-        </div>
-        <h1 class="text-5xl md:text-7xl font-bold mb-6 font-mono tracking-tight text-white">
-          WE ARE <span class="text-cyber-green neon-text">01xWEBSEC</span>
-        </h1>
-        <div class="h-16 md:h-20 flex items-center justify-center">
-          <p class="text-xl md:text-2xl text-gray-400 font-mono">
-            <span class="text-cyber-green">root@kali:~$</span> {{ typedText }}<span
-              class="animate-blink bg-cyber-green w-3 h-6 inline-block align-middle ml-1"></span>
-          </p>
-        </div>
-        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <button
-              class="px-8 py-3 bg-cyber-green text-cyber-black font-bold font-mono rounded hover:bg-white transition-all duration-300 hover:shadow-[0_0_20px_#00ff41]">
-            开始 CTF 之旅
-          </button>
-          <button
-              class="px-8 py-3 border border-gray-600 text-gray-300 font-bold font-mono rounded hover:border-cyber-green hover:text-cyber-green transition-all duration-300 bg-cyber-black/50 backdrop-blur-sm">
-            了解更多
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- About / Directions Section -->
-    <section id="about" class="py-20 bg-gradient-to-b from-transparent to-cyber-dark/80 relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-mono"><span class="text-cyber-green">#</span>
-            学习方向</h2>
-          <p class="text-gray-400 max-w-2xl mx-auto">
-            加入我们，探索网络安全的无限可能。无论你是新手还是老鸟，这里都有属于你的战场。
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="(track, index) in tracks" :key="index" class="cyber-card p-6 rounded-lg group">
-            <div
-                class="w-12 h-12 bg-cyber-greenDim rounded-lg flex items-center justify-center mb-4 group-hover:bg-cyber-green transition-colors duration-300">
-              <i :class="track.icon"
-                 class="text-2xl text-cyber-green group-hover:text-cyber-black transition-colors duration-300"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2 font-mono">{{ track.title }}</h3>
-            <p class="text-gray-400 text-sm mb-4 h-16">{{ track.desc }}</p>
-            <div class="w-full bg-gray-800 rounded-full h-1.5 mt-2">
-              <div :style="{ width: track.difficulty }" class="bg-cyber-green h-1.5 rounded-full"></div>
-            </div>
-            <span class="text-xs text-gray-500 mt-1 inline-block font-mono">难度系数: {{ track.difficulty }}</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-12 border-y border-cyber-green/10 bg-cyber-black/50 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div v-for="(stat, index) in stats" :key="index">
-            <div class="text-4xl font-bold text-white font-mono mb-2">{{ stat.value }}</div>
-            <div class="text-cyber-green text-sm font-mono uppercase tracking-wider">{{ stat.label }}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- News & Events -->
-    <section id="news" class="py-20 relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-end mb-12 border-b border-gray-800 pb-4">
-          <div>
-            <h2 class="text-3xl font-bold text-white font-mono"><span class="text-cyber-green">./</span> 最新动态</h2>
-          </div>
-          <a class="text-sm text-cyber-green font-mono hover:underline hidden sm:block" href="#">VIEW_ALL_LOGS</a>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Main News -->
-          <div class="md:col-span-2 cyber-card rounded-xl overflow-hidden relative group">
-            <div
-                class="absolute top-0 right-0 bg-cyber-green text-cyber-black text-xs font-bold px-3 py-1 font-mono z-10">
-              NEW
-            </div>
-            <div class="h-64 bg-gray-800 relative overflow-hidden">
-              <!-- Abstract coding background for image placeholder -->
-              <div class="absolute inset-0 bg-gradient-to-t from-cyber-black to-transparent z-10"></div>
-              <div class="w-full h-full bg-gray-800 flex items-center justify-center">
-                <i class="fas fa-newspaper text-5xl text-gray-600"></i>
-              </div>
-              <div class="absolute bottom-0 left-0 p-6 z-20">
-                <span class="text-cyber-green text-xs font-mono mb-2 block">2023-10-24</span>
-                <h3 class="text-2xl font-bold text-white mb-2">第十五届校内 CTF 新生赛圆满结束</h3>
-                <p class="text-gray-300 text-sm line-clamp-2">
-                  恭喜所有获奖队伍！本次比赛Web题型突破性创新，Reverse方向涌现出多名黑马...</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Side List -->
-          <div class="space-y-4">
-            <div v-for="(news, i) in newsList" :key="i"
-                 class="cyber-card p-4 rounded-lg flex items-start space-x-4 cursor-pointer hover:bg-cyber-greenDim/20">
-              <div class="flex-shrink-0 pt-1">
-                <div class="w-2 h-2 rounded-full bg-cyber-green animate-pulse"></div>
-              </div>
-              <div>
-                <span class="text-xs text-gray-500 font-mono block mb-1">{{ news.date }}</span>
-                <h4 class="text-white font-medium hover:text-cyber-green transition-colors text-sm">{{
-                    news.title
-                  }}</h4>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</template>
 
 <style scoped>
 .neon-text {
