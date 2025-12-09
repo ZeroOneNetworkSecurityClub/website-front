@@ -45,12 +45,13 @@
             <div class="flex items-center space-x-3 mb-4">
               <span
                   class="px-2 py-0.5 border border-cyber-red text-cyber-red text-xs font-mono rounded">LIVE_EVENT</span>
-              <span class="text-gray-400 text-sm font-mono"><i class="far fa-clock mr-1"></i>2023-11-20 09:00</span>
+              <span class="text-gray-400 text-sm font-mono"><i
+                  class="far fa-clock mr-1"></i>{{ formatDateTime(activity.date) }}</span>
             </div>
 
-            <h2 class="text-3xl font-bold text-white mb-4 glitch-text">冬季攻防演练：红蓝对抗</h2>
+            <h2 class="text-3xl font-bold text-white mb-4 glitch-text">{{ activity.title }}</h2>
             <p class="text-gray-400 mb-6 font-mono text-sm leading-relaxed">
-              本年度最大规模的实战演练。红队由校友战队组成，蓝队由在校成员防守。环境包括内网域渗透、Docker逃逸及Web逻辑漏洞挖掘。这是一场不容错过的实战机会。
+              {{ activity.description }}
             </p>
 
             <div
@@ -176,21 +177,29 @@ const searchQuery = ref('');
 
 // Countdown Logic
 const countdown = ref({days: '00', hours: '00', minutes: '00', seconds: '00'});
-const targetDate = new Date('2023-11-20T09:00:00').getTime(); // Example date
+
+const MILLISECONDS_PER_SECOND = 1000;
+const MILLISECONDS_PER_MINUTE = MILLISECONDS_PER_SECOND * 60;
+const MILLISECONDS_PER_HOUR = MILLISECONDS_PER_MINUTE * 60;
+const MILLISECONDS_PER_DAY = MILLISECONDS_PER_HOUR * 24;
+const DEMO_COUNTDOWN_DURATION = 258400000; // 3天左右的演示倒计时
 
 const updateCountdown = () => {
-  // For demo purposes, let's just make it a random future date if expired
-  // In real app, use targetDate
   const now = new Date().getTime();
   // Mocking a future date for demo visual
-  const demoTarget = now + 258400000;
+  const demoTarget = now + DEMO_COUNTDOWN_DURATION;
 
-  const distance = demoTarget - now;
+  let distance = demoTarget - now;
 
-  countdown.value.days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-  countdown.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-  countdown.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-  countdown.value.seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+  // 处理倒计时结束的情况
+  if (distance < 0) {
+    distance = 0;
+  }
+
+  countdown.value.days = Math.floor(distance / MILLISECONDS_PER_DAY).toString().padStart(2, '0');
+  countdown.value.hours = Math.floor((distance % MILLISECONDS_PER_DAY) / MILLISECONDS_PER_HOUR).toString().padStart(2, '0');
+  countdown.value.minutes = Math.floor((distance % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE).toString().padStart(2, '0');
+  countdown.value.seconds = Math.floor((distance % MILLISECONDS_PER_MINUTE) / MILLISECONDS_PER_SECOND).toString().padStart(2, '0');
 };
 
 const activities = ref([]);
@@ -224,7 +233,7 @@ const filteredEvents = computed(() => {
   // 提前转换搜索词为小写，避免重复转换
   const searchTerm = (searchQuery.value || '').toLowerCase();
 
-  return activities.value.filter(activity => {
+  return activities.value.slice(1,7).filter(activity => {
     // 确保activity对象有效
     if (!activity) return false;
 
@@ -267,12 +276,38 @@ const getIconColor = (type) => {
 
 const updateTime = () => {
   const now = new Date();
-  currentTime.value = now.toLocaleTimeString('en-GB', {hour12: false});
+  currentTime.value = now.toLocaleTimeString('cn-ZH', {hour12: false});
+};
+
+/**
+ * 格式化日期时间
+ * @param {string|number|Date} date - 需要格式化的日期时间
+ * @returns {string} 格式化后的日期时间字符串，格式为 YYYY-MM-DD HH:mm:ss
+ */
+const formatDateTime = (date) => {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) {
+    return ''; // 无效日期返回空字符串
+  }
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
 let timerInterval;
 let timeInterval;
 
+/**
+ * 组件挂载时启动定时器
+ * 设置两个定时器分别用于更新倒计时和当前时间显示
+ * 并立即执行一次更新函数以初始化显示
+ */
 onMounted(() => {
   timerInterval = setInterval(updateCountdown, 1000);
   timeInterval = setInterval(updateTime, 1000);

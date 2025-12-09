@@ -12,11 +12,11 @@
           <span class="text-cyber-green font-mono text-xs tracking-widest">SYSTEM_STATUS: ONLINE</span>
         </div>
         <h1 class="text-5xl md:text-7xl font-bold mb-6 font-mono tracking-tight text-white">
-          WE ARE <span class="text-cyber-green neon-text">01xWEBSEC</span>
+          WE ARE <span class="text-cyber-green neon-text">01WEBSEC</span>
         </h1>
         <div class="h-16 md:h-20 flex items-center justify-center">
           <p class="text-xl md:text-2xl text-gray-400 font-mono">
-            <span class="text-cyber-green">root@kali:~$</span> {{ typedText }}<span
+            <span class="text-cyber-green">root@01websec:~$</span> {{ typedText }}<span
               class="animate-blink bg-cyber-green w-3 h-6 inline-block align-middle ml-1"></span>
           </p>
         </div>
@@ -312,7 +312,7 @@ const initMatrix = () => {
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
 
-  const letters = '01010101001ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letters = '01010101001JSCFA01WEBSECCLUB';
   const fontSize = 14;
   const columns = canvas.width / fontSize;
   const drops = Array(Math.floor(columns)).fill(1);
@@ -405,7 +405,7 @@ canvas#matrix-bg {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: -1;
+  z-index: 0;
   opacity: 0.5; /* 进一步增加不透明度使效果更明显 */
   pointer-events: none; /* 确保不会干扰其他元素交互 */
 }

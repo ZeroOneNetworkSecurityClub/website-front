@@ -40,8 +40,8 @@
             <span>NET: ONLINE</span>
           </div>
 
-          <el-button class="font-mono font-bold" size="small" type="primary" @click="handleLogin">
-            > JOIN_US
+          <el-button class="font-mono font-bold" size="small" type="primary">
+            <router-link to="/join">> JOIN_US</router-link>
           </el-button>
         </div>
 
@@ -74,7 +74,9 @@
            href="https://docs.websec.org.cn">>
           /docs</a>
         <div class="pt-4 px-3">
-          <el-button class="w-full" type="primary">JOIN_US</el-button>
+          <el-button class="w-full" type="primary">
+            <router-link to="/join">JOIN_US</router-link>
+          </el-button>
         </div>
       </div>
     </div>

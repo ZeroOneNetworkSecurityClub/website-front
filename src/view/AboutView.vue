@@ -83,49 +83,45 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="member in members" :key="member.id"
-               class="group relative bg-cyber-gray tech-border p-1 transition-transform duration-300 hover:-translate-y-1">
+               class="group relative bg-cyber-gray tech-border p-1 transition-transform duration-300 hover:-translate-y-1 flex flex-col">
             <!-- Glowing Border Effect on Hover -->
             <div
                 class="absolute inset-0 bg-cyber-green opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style="clip-path: inherit; z-index: -1;"></div>
 
-            <div class="bg-cyber-dark h-full p-6 relative overflow-hidden"
+            <div class="bg-cyber-dark h-full p-6 relative overflow-hidden flex flex-col"
                  style="clip-path: polygon(0 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%);">
               <!-- Top Decoration -->
               <div class="absolute top-0 right-0 p-2">
                 <i class="fas fa-wifi text-gray-700 group-hover:text-cyber-green transition-colors"></i>
               </div>
 
-              <div class="flex items-center space-x-4 mb-6">
+              <!-- Avatar & Header -->
+              <div class="flex items-center space-x-4 mb-4">
                 <div
-                    class="w-16 h-16 rounded bg-gray-800 border border-gray-600 flex items-center justify-center overflow-hidden">
-                  <i :class="member.avatarIcon" class="text-2xl text-gray-400"></i>
+                    class="w-16 h-16 rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center overflow-hidden shrink-0 group-hover:border-cyber-green transition-colors duration-300">
+                  <img v-if="member.avatar" :src="member.avatar" alt="Avatar" class="w-full h-full object-cover">
+                  <i v-else class="fas fa-user-secret text-3xl text-gray-400"></i>
                 </div>
                 <div>
-                  <h3 class="text-white font-mono font-bold text-lg">{{ member.name }}</h3>
-                  <div class="text-cyber-green text-xs font-mono uppercase">{{ member.role }}</div>
-                </div>
-              </div>
-
-              <!-- Skill Bars -->
-              <div class="space-y-3 font-mono text-xs">
-                <div v-for="(skill, sIndex) in member.skills" :key="sIndex">
-                  <div class="flex justify-between text-gray-400 mb-1">
-                    <span>{{ skill.name }}</span>
-                    <span>{{ skill.level }}%</span>
-                  </div>
-                  <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                    <div
-                        :style="{ width: skill.level + '%' }"
-                        class="h-full bg-cyber-green group-hover:shadow-[0_0_8px_#00ff41] transition-all duration-1000 ease-out"></div>
+                  <h3 class="text-white font-mono font-bold text-lg group-hover:text-cyber-green transition-colors duration-300">{{ member.name }}</h3>
+                  <div class="text-cyber-green text-xs font-mono uppercase border border-cyber-green/30 px-2 py-0.5 rounded inline-block mt-1">
+                    {{ member.position }}
                   </div>
                 </div>
               </div>
 
-              <!-- ID Badge -->
-              <div class="mt-6 pt-4 border-t border-gray-800 flex justify-between items-center">
-                <span class="text-[10px] text-gray-600 font-mono">ID: {{ member.id }}</span>
-                <i class="fab fa-github text-gray-400 hover:text-white cursor-pointer"></i>
+              <!-- Description -->
+              <div class="mb-6 flex-grow">
+                <p class="text-gray-400 text-sm leading-relaxed font-mono line-clamp-3">
+                  {{ member.description }}
+                </p>
+              </div>
+
+              <!-- Footer Info -->
+              <div class="mt-auto pt-4 border-t border-gray-800 flex justify-between items-center text-[10px] text-gray-600 font-mono">
+                <span>UID: {{ String(member.id).padStart(3, '0') }}</span>
+                <span>JOINED: {{ formatDate(member.joinedAt) }}</span>
               </div>
             </div>
           </div>
@@ -154,95 +150,55 @@
 
 <script setup>
 
-const historyLogs = [
-  {
-    year: '2023',
-    tag: 'MILESTONE',
-    title: 'CISCN 全国一等奖',
-    content: '战队主力 "0xAlpha" 在第十六届全国大学生信息安全竞赛中突围，获得华南赛区特等奖及全国总决赛一等奖。'
-  },
-  {
-    year: '2022',
-    tag: 'EXPANSION',
-    title: '实验室 2.0 启用',
-    content: '社团获得学院支持，迁入全新的网络安全攻防实验室，部署了私有云靶场平台，服务器算力提升 400%。'
-  },
-  {
-    year: '2021',
-    tag: 'INIT',
-    title: '社团成立',
-    content: '三位创始人以 "White Hat, Black Heart" 为口号，在旧机房成立了 0xShield。首批招新 20 人。'
-  }
-];
+import {getHistoryList} from "@/api/about.js";
+import {getMemberList} from "@/api/member.js";
+import {onMounted} from "vue";
 
-const members = [
-  {
-    id: 'UID_001',
-    name: 'Alex "Root"',
-    role: 'President / Pwn',
-    avatarIcon: 'fas fa-user-astronaut',
-    skills: [
-      {name: 'Binary Exploitation', level: 95},
-      {name: 'C/C++', level: 90},
-      {name: 'Kernel', level: 80}
-    ]
-  },
-  {
-    id: 'UID_002',
-    name: 'Sarah "Cipher"',
-    role: 'Vice President / Crypto',
-    avatarIcon: 'fas fa-user-secret',
-    skills: [
-      {name: 'Cryptography', level: 98},
-      {name: 'Python', level: 95},
-      {name: 'Mathematics', level: 85}
-    ]
-  },
-  {
-    id: 'UID_003',
-    name: 'Mike "Spider"',
-    role: 'Web Head / Penetration',
-    avatarIcon: 'fas fa-user-ninja',
-    skills: [
-      {name: 'Web Security', level: 92},
-      {name: 'Network Pentest', level: 88},
-      {name: 'Java', level: 75}
-    ]
-  },
-  {
-    id: 'UID_004',
-    name: 'Vera "Re"',
-    role: 'Reverse Engineering',
-    avatarIcon: 'fas fa-bug',
-    skills: [
-      {name: 'Assembly', level: 90},
-      {name: 'Malware Analysis', level: 85},
-      {name: 'Android', level: 70}
-    ]
-  },
-  {
-    id: 'UID_005',
-    name: 'Ghost',
-    role: 'Misc / Forensics',
-    avatarIcon: 'fas fa-ghost',
-    skills: [
-      {name: 'Data Forensics', level: 85},
-      {name: 'Steganography', level: 90},
-      {name: 'Bash Scripting', level: 80}
-    ]
-  },
-  {
-    id: 'UID_006',
-    name: 'Bot_404',
-    role: 'Infrastructure',
-    avatarIcon: 'fas fa-robot',
-    skills: [
-      {name: 'DevOps', level: 95},
-      {name: 'Docker/K8s', level: 90},
-      {name: 'Network Admin', level: 85}
-    ]
-  }
-];
+import { ref } from 'vue'
+
+const historyLogs = ref([])
+
+function getHistory() {
+  getHistoryList().then(res => {
+    historyLogs.value = res.data
+  }).catch(error => {
+    console.error('获取历史记录失败:', error)
+    // 可以在这里添加错误提示逻辑
+  })
+}
+
+const members = ref([]);
+
+function getMembers() {
+  getMemberList().then(res => {
+    // 简单验证返回数据
+    if (Array.isArray(res.data)) {
+      members.value = res.data;
+    } else {
+      console.warn('返回的成员列表数据格式不正确');
+      members.value = [];
+    }
+  }).catch(error => {
+    console.error('获取成员列表失败:', error);
+    members.value = [];
+    // 可以在这里添加错误提示逻辑
+  })
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '-');
+};
+
+onMounted(() => {
+  getHistory()
+  getMembers()
+})
 </script>
 
 <style scoped>
